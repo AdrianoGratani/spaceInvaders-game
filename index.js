@@ -36,7 +36,7 @@ class Particle {  constructor({position, velocity, radius, color, fades}) {
     update() {  this.draw();  this.position.x += this.velocity.x;  this.position.y += this.velocity.y;   if (this.fades) {  this.opacity -= 0.01  }  }
 }
 
-class Invader{  constructor({position}) {  this.velocity = {  x: 0,  y: 0 };
+class Invader{  constructor({position}) {  this.velocity = {  x: 0,  y: 0 };  // velocity set to 0 = invader doesn't moved, it 'gets moved' by its grid container.
         const image = new  Image();  image.src = './img/invader.png'; 
         image.onload = () => {  const scale = 1;  this.image = image;  this.width = image.width * scale;  this.height = image.height * scale;
             this.position = {  x: position.x,  y: position.y  };
@@ -48,7 +48,10 @@ class Invader{  constructor({position}) {  this.velocity = {  x: 0,  y: 0 };
     shoot(invaderProjectiles) {  invaderProjectiles.push(new InvaderProjectile({  position: {  x: this.position.x + this.width / 2,  y: this.position.y + this.height},  velocity: {  x: 0, y: 5 }  })) }
 }
 
+// the Grid class is a container for invaders. position 0 on both axis: it starts always at the beginning of our Canvas. 
+// random velocity on x-axis, the y-axis gets updated on conditional boundary detection only, not from constructor.
 class Grid {    constructor() {  this.position = {  x: 0, y: 0  };  this.velocity = { x: (Math.random() * 3) + 1.5, y: 0 }
+// the grid class ITSELF generates the instance array for the invaders. 
     this.invaders = [];     const columns = Math.floor(Math.random() * 10 + 3);      const rows = Math.floor(Math.random() * 7 + 3);      
     this.width = columns * 30
         for (let i = 0; i < columns; i++){
