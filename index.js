@@ -43,6 +43,7 @@ class Invader{  constructor({position}) {  this.velocity = {  x: 0,  y: 0 };
         }
     }
     draw() {  c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)  }
+    // each invader moves in sync with the grid container. so the instance inherits the grid velocity as argument.
     update({velocity}) {  if (this.image) {  this.draw();  this.position.x += velocity.x;  this.position.y += velocity.y;  };  };
     shoot(invaderProjectiles) {  invaderProjectiles.push(new InvaderProjectile({  position: {  x: this.position.x + this.width / 2,  y: this.position.y + this.height},  velocity: {  x: 0, y: 5 }  })) }
 }
