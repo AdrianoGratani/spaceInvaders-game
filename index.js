@@ -75,8 +75,9 @@ for (let i = 0; i < Math.floor(Math.random() * 500 + 350); i++) {
 }
 
 // logic for explosion animations, both ship and invaders, object is the instance exploded, you send it as arg and you can use its position to locat the explosion:
-function createParticles({object, color, fades}) {
-    for (let i = 0; i < Math.floor(Math.random() * 10 + 2); i++) {
+// this function pushes fading particle instances in the particles array, at the position of the exploded starship instance;
+function createParticles({object, color, fades}) { // `object` can be player or the invader.
+    for (let i = 0; i < Math.floor(Math.random() * 10 + 2); i++) { // limit condition is random to create each time a different explosion in size.
         particles.push(new Particle({   position: {  x: object.position.x + object.width / 2,  y: object.position.y + object.height / 2  },  velocity: {  x: Math.random() - 0.3,  y: Math.random() - 0.3  },
             radius: Math.random() * 3,  color: color || '#baa0de',  fades: fades}))
     }
@@ -88,30 +89,36 @@ function createParticles({object, color, fades}) {
 function animate() {    if (!game.active) return;    
     window.requestAnimationFrame(animate);     c.fillStyle = 'black';    c.fillRect(0, 0, canvas.width, canvas.height);    //canvas color;
     player.update();     // player instance rendering;
+                    
+   // particles stars repositioning; particle explosions garbage collection;
     particles.forEach((particle, i) => {   // we need second argument `i` to position each particle in the canvas 
-                                           // particles rendering: works for BOTH stars and explosions;
         if (particle.position.y - particle.radius >= canvas.height){  particle.position.x = Math.random() * canvas.width;  particle.position.y = -particle.radius;  }   // stars reappearence position logic
         else if (particle.position.y + particle.radius <= 0){  particle.position.x = Math.random() * canvas.width;  particle.position.y = canvas.height + particle.radius; }
 
-            // opacity gets updated only for explosion particles, the starts only have opacity = 1
+            // opacity gets updated only for explosion particles, the stars only have opacity = 1
         if (particle.opacity <= 0){ setTimeout(() => { particles.splice(i, 1)}, 0)}   else { particle.update() }        // garbage collect || update based on instance opacity
     })     // console.log(particles)
 
+    // invader Projectiles instance: rendering or garbage collection, based on conditionals;
+    // game over conditions based on collision with the player instance. 
     invaderProjectiles.forEach((invaderProjectile, invProIndex) => {   if (invaderProjectile.position.y + invaderProjectile.height >= canvas.height) {
             setTimeout(() => {  invaderProjectiles.splice(invProIndex, 1)  }, 0)    // garbage collect invader projectiles out of the screen;
         } else {  invaderProjectile.update()  }
         
         if (  invaderProjectile.position.y + invaderProjectile.height >= player.position.y && invaderProjectile.position.x >= player.position.x && invaderProjectile.position.x <= player.position.x + player.width ) 
-            {   // GAME LOST
-                createParticles({   object: player,  color: 'white',  fades: true  })
+            {   // GAME LOST // create the animation for explotion, generaing random particles over the player starship and stop the game.
+                createParticles({   object: player,  color: 'white',  fades: true  })   // explosion animation and particles fading away. start from the instance position, that's why `player` is sent as argument
                 setTimeout(() => {   invaderProjectiles.splice(invProIndex, 1);  player.opacity = 0;  game.over = true;  }, 0)
                 setTimeout(() => {   game.active = false;  if (score <= 1000) {  scoreEl.innerHTML = score + ', well... try again!'} else if (score > 1000 && score <= 3000) {  scoreEl.innerHTML = score + ', nice!!!'} else if (score > 3000 && score <= 10000){  scoreEl.innerHTML = score + ', ACE gamer!!!'} else if (score > 10000 && score <= 50000) {  scoreEl.innerHTML = score + ', the KING of the space!!!'} else if (score >= 100000) {  scoreEl.innerHTML = score + ', the CHAMP: more than 1000 killings!!!!!!!!!!'}  }, 2000)
             }
         })// console.log(invaderProjectiles)
 
-    projectiles.forEach((projectile, index) => {  if (projectile.position.y + projectile.radius <= 0) {  setTimeout(() => {  projectiles.splice(index, 1)  }, 0)}    else {projectile.update()}  })       // projectile - rendering / garbage collector for your ship projectiles[]
+    // projectile - rendering / garbage collector for your ship projectiles[]
+    projectiles.forEach((projectile, index) => {  if (projectile.position.y + projectile.radius <= 0) {  setTimeout(() => {  projectiles.splice(index, 1)  }, 0)}    else {projectile.update()}  })       
 
-    // rendering for invaders - grid - projectiles / shooting / collision / particles - garbage collectors;   STRUCTURE: (grids>>invaders>>projectiles)
+    // rendering for: grid - invaders - projectiles 
+    // conditions for : invader shooting / invader particles collision 
+    // garbage collectors : grid / invaders;                                           STRUCTURE: (grids>>invaders>>projectiles)
     grids.forEach((grid, i) => {  grid.update()
         if (frames % Math.floor((Math.random() * 20) + 30) === 0 && grid.invaders.length > 0) {        // invader projectile SHOOTING animation
             grid.invaders[Math.floor(Math.random() * grid.invaders.length)].shoot(invaderProjectiles)  }
