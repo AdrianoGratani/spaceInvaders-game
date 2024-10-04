@@ -49,7 +49,7 @@ class Invader{  constructor({position}) {  this.velocity = {  x: 0,  y: 0 };  //
 }
 
 // the Grid class is a container for invaders. position 0 on both axis: it starts always at the beginning of our Canvas. 
-// random velocity on x-axis, the y-axis gets updated on conditional boundary detection only, not from constructor.
+// random row-cols size, random velocity on x-axis: the y-axis gets updated on conditional boundary detection only, not from constructor.
 class Grid {    constructor() {  this.position = {  x: 0, y: 0  };  this.velocity = { x: (Math.random() * 3) + 1.5, y: 0 }
 // the grid class ITSELF generates the instance array for the invaders. 
     this.invaders = [];     const columns = Math.floor(Math.random() * 10 + 3);      const rows = Math.floor(Math.random() * 7 + 3);      
@@ -64,7 +64,7 @@ class Grid {    constructor() {  this.position = {  x: 0, y: 0  };  this.velocit
 }
 
 /////////////// class instances, arrays for instances, frame counter, key check
-const player = new Player();    const projectiles = [];    const grids = [];    const invaderProjectiles = [];    const particles = [];  
+const player = new Player();    const projectiles = [];    const grids = [];    const invaderProjectiles = [];    const particles = [];  // invaders instance container is managed within the Grid class.
 let frames = 0
 let randomInterval =  Math.floor(Math.random() * 400) + 250
 const keys = {  a: { pressed: false },  d: { pressed: false }  }
@@ -84,13 +84,16 @@ function createParticles({object, color, fades}) {
 
 /////////////////
 // ANIMATION LOOP   losing condition, rendering particles, stars, ship, bullets, garbage collection etc
-function animate() {    if (!game.active) return;    window.requestAnimationFrame(animate);     c.fillStyle = 'black';    c.fillRect(0, 0, canvas.width, canvas.height);    //canvas color;
-    player.update();
-
-    particles.forEach((particle, i) => {                                        // particles rendering  
+// Canvas renders the black background space in the animation loop.
+function animate() {    if (!game.active) return;    
+    window.requestAnimationFrame(animate);     c.fillStyle = 'black';    c.fillRect(0, 0, canvas.width, canvas.height);    //canvas color;
+    player.update();     // player instance rendering;
+    particles.forEach((particle, i) => {   // we need second argument `i` to position each particle in the canvas 
+                                           // particles rendering: works for BOTH stars and explosions;
         if (particle.position.y - particle.radius >= canvas.height){  particle.position.x = Math.random() * canvas.width;  particle.position.y = -particle.radius;  }   // stars reappearence position logic
         else if (particle.position.y + particle.radius <= 0){  particle.position.x = Math.random() * canvas.width;  particle.position.y = canvas.height + particle.radius; }
- 
+
+            // opacity gets updated only for explosion particles, the starts only have opacity = 1
         if (particle.opacity <= 0){ setTimeout(() => { particles.splice(i, 1)}, 0)}   else { particle.update() }        // garbage collect || update based on instance opacity
     })     // console.log(particles)
 
