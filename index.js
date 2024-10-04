@@ -45,6 +45,8 @@ class Invader{  constructor({position}) {  this.velocity = {  x: 0,  y: 0 };  //
     draw() {  c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)  }
     // each invader moves in sync with the grid container. so the instance inherits the grid velocity as argument.
     update({velocity}) {  if (this.image) {  this.draw();  this.position.x += velocity.x;  this.position.y += velocity.y;  };  };
+    // shoot() 1. take the invaders' grid 2. pick a random invader from the grid 3. the invader calls' this function.
+              //  4. this function pushes a projectile instance in the projectiles array. if the projectile reach the end of the canvas, garbage collection through .spice() occurs
     shoot(invaderProjectiles) {  invaderProjectiles.push(new InvaderProjectile({  position: {  x: this.position.x + this.width / 2,  y: this.position.y + this.height},  velocity: {  x: 0, y: 5 }  })) }
 }
 
@@ -119,7 +121,8 @@ function animate() {    if (!game.active) return;
     // rendering for: grid - invaders - projectiles 
     // conditions for : invader shooting / invader particles collision 
     // garbage collectors : grid / invaders;                                           STRUCTURE: (grids>>invaders>>projectiles)
-    grids.forEach((grid, i) => {  grid.update()
+    grids.forEach((grid, i) => {  grid.update()                // rendering for each grid instance found in grids[]
+        // generate a random time interval: if there's invaders left in the grid, one of them, randomly chosen, will shoot a projectile.
         if (frames % Math.floor((Math.random() * 20) + 30) === 0 && grid.invaders.length > 0) {        // invader projectile SHOOTING animation
             grid.invaders[Math.floor(Math.random() * grid.invaders.length)].shoot(invaderProjectiles)  }
 
