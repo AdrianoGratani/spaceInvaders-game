@@ -20,14 +20,19 @@ I think It's not necesessary to repeat these concepts.
 
   - For Space invaders, I will focus more on explaining in details:
       - sprite rendering (generating Images, instead of drawing Canvas shapes)
-      - how the garbage collector is made, and its purpose;
       - how the invaders' grid is randomly generated;
+      - how the garbage collector is made, and its purpose;
       - the logic behind the invaders' random shots;
    
+  - Sprite rendering:
+      For the spaceship and invaders, we don't draw shapes (as we did for Pong and Pacman) using methods from the Canvas ContextAPI anymore. No `.restore()`, `.arc()`, `beginPath()`...
+      Instead, we import an HTML `Image()` object into JavaScript and initialize its `.src` to a spefic image file in `./img`. (`Image()` can be considered just like an HTML tag, with same functionalities, but in Js.)
+      Importing PNG files in our script can be 'delayed', while the code compilation goes slower, which means that in many cases our Canvas display everything but our png representation of the characters. To avoid this, we use the `image.onload` method (`image` is the const which stores the `Image().src`): this method calls an async, anonymous function, inside the scope we define the basic properties of the image, scaling, width, height etc.. Because it's async, the game 'waits' for this function for the rendering of the Canvas script.
+    
   - The garbage colletion:
       Invaders and their grids, Invaders Projectiles, Player projectiles, exploding particles... we generate instances of each of them to be rendered on the screen. In order to access          their classes, initialize each of their properties (position and velocity for both axes, colors and sizes etc..) each frame, it costs MEMORY and COMPUTATION TIME. But when the            invader die or their projectiles falls out of the screen, or their exploding particles definitely fade away, what happens? Actually, we can't see them anymore, but each of these          things are still running in memory and performing tasks, and, most important, they STILL consume precious CPU memory.
       Over time, the array instances can grow really big as new instances get generated on random intervals, which means that the memory consumed gets bigger in size, this can make our         game running slower, so is better to definitely eliminate them from memory.
-      We need some form of garbage collection. Garbage collection is a Memory management praxis, and in many languages such as Java is performed automatically. Also JavaScript periodically checks objects and variables which are no longer referenced in memory, and deallocates them from memory. But our situation is a bit different: we are using Canvas, and even though those instance disappeared and became 'useless', they are still referenced so JavaScript cannot detect them as 'garbage'. That's why we have to explicitly set the memory management for instances deallocation. 
+      We need some form of garbage collection. In Computer Science, Garbage collection is a Memory management praxis, and in many languages such as Java is performed automatically. Also JavaScript periodically checks objects and variables which are no longer referenced in memory, and deallocates them from memory. But our situation is a bit different: we generate instances through Canvas, and even though those instance disappeared and became 'useless', they are still referenced, so that JavaScript cannot detect them as 'garbage'. That's why we have to explicitly set the memory management for instances deallocation. 
 
 
 
