@@ -33,11 +33,10 @@ Important:
       -  `draw()` calls `.save()` first = saves the context state, then updates `.globalAlpha` to the currenty `this.opacity` (in case the player loses: opacity goes to 0)
       - then uses `.translate()` to move the origin drawing point to the center of the player = we want to simulate the rotation.
       - at this point we can use `.translate()` to rotate the image rendering, according to the current value of `this.position` (in case a new value has been sent from event listeners, otherwise this call returns no changes at all.)
+      - we previously translated the origin point to the center of player instance, now it's time to render the image using `.drawImage()`, but before we translate the origin point back to `this.position` on x and y axis.
+        (imagine `.translate()` like a pen, you just moved the pen from the center of the player (you were there to simulate the rotation), back to the origin point (to draw the image). If you try to use `drawImage()` WITHOUT translating back to the previous position, the image would be offset by half of its size.)
     
   - The garbage colletion:
       Invaders and their grids, Invaders Projectiles, Player projectiles, exploding particles... we generate instances of each of them to be rendered on the screen. In order to access          their classes, initialize each of their properties (position and velocity for both axes, colors and sizes etc..) each frame, it costs MEMORY and COMPUTATION TIME. But when the            invader die or their projectiles falls out of the screen, or their exploding particles definitely fade away, what happens? Actually, we can't see them anymore, but each of these          things are still running in memory and performing tasks, and, most important, they STILL consume precious CPU memory.
       Over time, the array instances can grow really big as new instances get generated on random intervals, which means that the memory consumed gets bigger in size, this can make our         game running slower, so is better to definitely eliminate them from memory.
       We need some form of garbage collection. In Computer Science, Garbage collection is a Memory management praxis, and in many languages such as Java is performed automatically. Also JavaScript periodically checks objects and variables which are no longer referenced in memory, and deallocates them from memory. But our situation is a bit different: we generate instances through Canvas, and even though those instance disappeared and became 'useless', they are still referenced, so that JavaScript cannot detect them as 'garbage'. That's why we have to explicitly set the memory management for instances deallocation. 
-
-
-
