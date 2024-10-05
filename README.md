@@ -14,7 +14,7 @@ This game is definitely more advanced than Pacman in terms of loops, randomizati
 
 ### Code ###
 
-( Important:
+Important:
   - In my analysis of Pong (README.md) I thoroughly explained: Classes, instances of Classes, methods and Canvas ContextAPI in general, and for Pacman I also explained Timeouts and Collision conditionals and javaScript in general.
 I think It's not necesessary to repeat these concepts.
 
