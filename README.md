@@ -42,7 +42,13 @@ Important:
   - Grids: Invaders container:
     - The original game generates multiple opponents, which are distributed across rows and columns. As a result,the movement for each of them appears highly sinchronized.
     - Instead of instantiating each invader separately, we create a class `Grid`, with random position, velocity, and rows and columns,    and we generate the Invader instance array INSIDE the grid.
-      A grid is basically a 2D array, we use nested loops to push the Invaders inside it. (positioning of each invaders is quite straightforward. Nested loop uses two iterators `i` (outer = rows) and `j` (inner = cols), to render each one we just multiply fallback width and height for these values )   
+      A grid is basically a 2D array, we use nested loops to push the Invaders inside it. (positioning of each invaders is quite straightforward. Nested loop uses two iterators `i` (outer = rows) and `j` (inner = cols), to render each one we just multiply fallback width and height for these values )
+
+  - Invader shooting logic:
+    - `shoot()` method pushes a projectile instance in the projectiles arrays. By default a projectiles takes the position of the invaders which shoots, and can move only towards negative-y.
+    - The shooter is randomly chosen from the invaders array,
+    Here a semplified verion in pseudo-code
+    - Animation() --> Grids intance array forEach(grid): random shooter method --> single Grid instance: update() invader rendering. 
     
   - The garbage collection:
       - Invaders and their grids, Invaders Projectiles, Player projectiles, exploding particles... we generate instances of each of them to be rendered on the screen. In order to access          their classes, initialize each of their properties (position and velocity for both axes, colors and sizes etc..) each frame, it costs MEMORY and COMPUTATION TIME. But when the            invader die or their projectiles falls out of the screen, or their exploding particles definitely fade away, what happens? Actually, we can't see them anymore, but each of these things are still running in memory and performing tasks, and, most important, they STILL consume precious CPU memory.
